@@ -18,50 +18,50 @@ app.use(cors());
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
     serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
     }
-  });
-  async function run() {
+});
+async function run() {
     try {
-      // Connect the client to the server	(optional starting in v4.7)
-      await client.connect();
-      // Send a ping to confirm a successful connection
-  // Specify the database and collection
-  const db = client.db("sample_mflix");
-//   const collection = db.collection("users");
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        // Specify the database and collection
+        const db = client.db("sample_mflix");
+        //   const collection = db.collection("users");
 
-  // Query the collection to fetch data
-//   const users = await collection.find({}).toArray();
-//   console.log("Users:", users);
+        // Query the collection to fetch data
+        //   const users = await collection.find({}).toArray();
+        //   console.log("Users:", users);
+// Define routes for CRUD operations
+app.post('/api/users', async (req, res) => {
+    const { name, email } = req.body;
+    const usersCollection = client.db("sample_mflix").collection("users");
+    const result = await usersCollection.insertOne({ name, email });
+    res.json(result.ops[0]);
+});
 
-    // Define routes for CRUD operations
-    app.post('/api/users', async (req, res) => {
-        const { name, email } = req.body;
-        const usersCollection = client.db("sample_mflix").collection("user");
-        const result = await usersCollection.insertOne({ name, email });
-        res.json(result.ops[0]);
-      });
-  
-      app.get('/api/users', async (req, res) => {
-        const usersCollection = client.db("sample_mflix").collection("user");
-        const users = await usersCollection.find({}).toArray();
-        res.json(users);
-      });
-  
+app.get('/api/users', async (req, res) => {
+    const usersCollection = client.db("sample_mflix").collection("users");
+    const users = await usersCollection.find({}).toArray();
+    res.json(users);
+});
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
+        // Ensures that the client will close when you finish/error
+        await client.close();
     }
-  }
-  run().catch(console.dir);
-// Define routes
-// Example route
-app.get('/api', (req, res) => {
-  res.send('Hello from the backend!');
-});
+}
+
+run().catch(console.dir);
+
+// // Define routes
+// // Example route
+// app.get('/api', (req, res) => {
+//   res.send('Hello from the backend!');
+// });
 
 // Start server
 const PORT = process.env.PORT || 3001;
